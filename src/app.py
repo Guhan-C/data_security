@@ -7,7 +7,7 @@ app = Flask(__name__)
 app.secret_key = 'supersecretkey'
 
 # MongoDB connection setup
-client = MongoClient('mongodb://localhost:27017/')  # Replace with your MongoDB connection string
+client = MongoClient('mongodb+srv://cguhan03:guhan2003@cluster0.1mgs3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')  # Replace with your MongoDB connection string
 db = client['Data_Security']  # Replace with your database name
 users_collection = db['users']  # Collection to store user details
 
