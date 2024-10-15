@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
-BLOCKED_IPS = ['103.5.112.80'] 
+
 # MongoDB connection setup
 client = MongoClient('mongodb+srv://cguhan03:guhan2003@cluster0.1mgs3.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true')
   # Replace with your MongoDB connection string
@@ -17,13 +17,7 @@ UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-@app.before_request
-def block_ip():
-    ip = request.remote_addr
-    print(ip)
-    if ip in BLOCKED_IPS:
-        print(f"Blocked IP: {ip}")
-        abort(403)
+
 @app.route('/')
 def index():
     if 'username' in session:
