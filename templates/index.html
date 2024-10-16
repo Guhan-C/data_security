@@ -1,25 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload App</title>
-    <link rel="stylesheet" href="../css/index.css"> 
-</head>
-<body>
-    <h1>Welcome to the File Upload App</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Upload App</title>
+        <link rel="stylesheet" href="../css/index.css" />
+    </head>
+    <body>
+        <h1>Welcome to the File Upload App</h1>
 
-    {% if 'username' in session %}
+        {% if 'username' in session %}
         <p>Welcome, {{ session['username'] }}!</p>
         <form action="/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" required>
+            <input type="file" name="file" required />
             <button type="submit">Upload File</button>
         </form>
         <a href="/logout">Logout</a>
-    {% else %}
+        {% else %}
         <p>Please choose an option:</p>
         <a href="/login">Login</a> | <a href="/register">Register</a>
-    {% endif %}
-</body>
+        {% endif %}
+    </body>
 </html>
-
