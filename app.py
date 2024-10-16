@@ -8,7 +8,6 @@ app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
 
 # MongoDB connection setup
 client = MongoClient('mongodb+srv://cguhan03:guhan2003@cluster0.1mgs3.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true')
-  # Replace with your MongoDB connection string
 db = client['Data_Security']  # Replace with your database name
 users_collection = db['users']  # Collection to store user details
 
@@ -17,6 +16,23 @@ UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# List of allowed and blocked IP addresses for access control
+ALLOWED_IPS = ['127.0.0.1', '192.168.1.100']  # Replace with the IPs you want to allow
+BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
+
+def is_ip_allowed():
+    ip = request.remote_addr
+    if ip in BLOCKED_IPS:
+        return False
+    if ALLOWED_IPS and ip not in ALLOWED_IPS:
+        return False
+    return True
+
+@app.before_request
+def check_ip():
+    if not is_ip_allowed():
+        return "Access Denied: Your IP address is not allowed.", 403
 
 @app.route('/')
 def index():
@@ -90,4 +106,3 @@ def upload_file():
 
 if __name__ == '__main__':
     app.run(debug=True)
-
