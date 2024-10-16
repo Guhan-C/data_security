@@ -21,8 +21,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 ALLOWED_IPS = ['127.0.0.1', '192.168.1.100']  # Replace with the IPs you want to allow
 BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
 
+def get_client_ip():
+    return request.headers.get(request.remote_addr)  # Support for reverse proxies
+
 def is_ip_allowed():
-    ip = request.remote_addr
+    ip = get_client_ip()
+    print(f"Client IP: {ip}")  # Log the IP for debugging purposes
     if ip in BLOCKED_IPS:
         return False
     if ALLOWED_IPS and ip not in ALLOWED_IPS:
@@ -33,6 +37,8 @@ def is_ip_allowed():
 def check_ip():
     if not is_ip_allowed():
         return "Access Denied: Your IP address is not allowed.", 403
+    else:
+        return request.remote_addr
 
 @app.route('/')
 def index():
