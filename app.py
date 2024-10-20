@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, session, redirect, url_for
 import os
 from pymongo import MongoClient
+import gridfs
 from werkzeug.security import generate_password_hash, check_password_hash
+from cryptography.fernet import Fernet
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
@@ -10,6 +12,11 @@ app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
 client = MongoClient('mongodb+srv://cguhan03:guhan2003@cluster0.1mgs3.mongodb.net/?retryWrites=true&w=majority&tls=true&tlsAllowInvalidCertificates=true')
 db = client['Data_Security']  # Replace with your database name
 users_collection = db['users']  # Collection to store user details
+fs = gridfs.GridFS(db)  # GridFS instance for file storage
+FT=db["FileTranfer"]
+# Encryption key (you should securely store and retrieve this key)
+encryption_key = Fernet.generate_key()  # You can store this securely
+cipher = Fernet(encryption_key)
 
 # Directory for storing uploaded files
 UPLOAD_FOLDER = 'uploads'
@@ -21,20 +28,14 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
 
 def get_client_ip():
-    # Check for reverse proxies, then use request.remote_addr
     if request.headers.getlist("X-Forwarded-For"):
-        # Log the X-Forwarded-For header for debugging
-        print(f"X-Forwarded-For header: {request.headers.getlist('X-Forwarded-For')}")
         ip_list = request.headers.getlist("X-Forwarded-For")[0].split(',')
-        return ip_list[-1].strip()  # Return the last IP in the list
-    print(f"Remote Addr: {request.remote_addr}")  # Log the remote address
+        return ip_list[-1].strip()
     return request.remote_addr
 
 def is_ip_allowed():
     ip = get_client_ip()
-    print(f"Client IP: {ip}")  # Log the IP for debugging purposes
     if ip in BLOCKED_IPS:
-        print(f"Blocked IP detected: {ip}")
         return False
     return True
 
@@ -46,12 +47,16 @@ def check_ip():
 @app.route('/')
 def index():
     if 'username' in session:
-        return render_template('index.html')  # Serves the file upload page for logged-in users
-    return render_template('index.html', logged_in=False)  # Render the index page for non-logged-in users
+        return render_template('index.html')
+    return render_template('index.html', logged_in=False)
 
 @app.route('/register', methods=['GET'])
 def show_register():
-    return render_template('register.html')  # Serve the registration HTML page
+    return render_template('register.html')
+
+@app.route('/Transfer')
+def Transfer():
+    return render_template('Transfer.html')
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -61,10 +66,7 @@ def register():
     if existing_user:
         return "Username already exists"
     
-    # Hash the password for security
     hashed_password = generate_password_hash(password)
-    
-    # Insert new user into the database
     users_collection.insert_one({
         "username": username,
         "password": hashed_password
@@ -74,21 +76,16 @@ def register():
 
 @app.route('/login', methods=['GET'])
 def show_login():
-    return render_template('login.html')  # Serve the login HTML page
+    return render_template('login.html')
 
 @app.route('/login', methods=['POST'])
 def login():
     username = request.form['username']
     password = request.form['password']
-    
-    # Find user in the database
     user = users_collection.find_one({"username": username})
-    
-    # Check if user exists and verify password
     if user and check_password_hash(user['password'], password):
         session['username'] = username
         return redirect(url_for('index'))
-    
     return "Invalid username or password"
 
 @app.route('/logout')
@@ -98,6 +95,10 @@ def logout():
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
+    username_receiver = request.form['Username']
+    user = users_collection.find_one({"username": username_receiver})
+    if not user:
+        return "User not found"
     if 'username' not in session:
         return "You must be logged in to upload files"
     
@@ -109,9 +110,22 @@ def upload_file():
         return "No selected file"
     
     if file:
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-        file.save(file_path)
-        return f"File uploaded successfully: {file.filename}"
+        # Read file data and encrypt it
+        
+        username_sender=session["username"]
+        key=encryption_key
+        file_data = file.read()
+        encrypted_data = cipher.encrypt(file_data)  # Encrypt the file
+        FT.insert_one({
+        "username_sender": username_sender,
+        "username_receiver": username_receiver,
+        "key":key,
+        "file_name":file.filename
+    })
+        # Store encrypted file in MongoDB GridFS
+        file_id = fs.put(encrypted_data, filename=file.filename)
+
+        return f"File uploaded and encrypted successfully with ID: {file.filename}"
 
 if __name__ == '__main__':
     app.run(debug=True)
