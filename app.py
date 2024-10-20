@@ -18,7 +18,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # List of allowed and blocked IP addresses for access control
-ALLOWED_IPS = ['127.0.0.1', '192.168.1.100', '192.168.1.41']  # Replace with the IPs you want to allow
+ALLOWED_IPS = ['127.0.0.1', '192.168.1.100', '192.168.1.41','192.168.1.9']  # Replace with the IPs you want to allow
 BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
 
 def get_client_ip():
