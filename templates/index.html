@@ -28,6 +28,12 @@
             >
                 Go to Transfer Page
             </button>
+            <button
+            type="button"
+            onclick="window.location.href='{{ url_for('Reciever') }}'"
+        >
+            Go to Reciever Page
+        </button>
             <a href="/logout">Logout</a>
             {% else %}
             <p>Please choose an option:</p>

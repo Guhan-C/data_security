@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Receiver Page</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}" />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Files Available for Download</h1>
+            {% if file_count > 0 %}
+            <ul>
+                {% for file in files %}
+                <li>
+                    <p>File: {{ file.file_name }}</p>
+                    <a href="{{ url_for('download_file', file_name=file.file_name) }}">Download</a>
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p>No files available for download.</p>
+            {% endif %}
+        </div>
+    </body>
+</html>

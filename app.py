@@ -4,6 +4,8 @@ from pymongo import MongoClient
 import gridfs
 from werkzeug.security import generate_password_hash, check_password_hash
 from cryptography.fernet import Fernet
+from bson.binary import Binary
+import base64
 
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_secret_key')
@@ -57,6 +59,56 @@ def show_register():
 @app.route('/Transfer')
 def Transfer():
     return render_template('Transfer.html')
+
+@app.route('/Reciever')
+def Reciever():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Get the logged-in username
+    username_receiver = session['username']
+    
+    # Retrieve files sent to the logged-in user
+    files = FT.find({"username_receiver": username_receiver})
+    file_count = FT.count_documents({"username_receiver": username_receiver})
+
+    return render_template('Reciever.html', files=files, file_count=file_count)
+
+@app.route('/download/<file_name>')
+def download_file(file_name):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    # Retrieve the file and its associated metadata from MongoDB
+    file_data = FT.find_one({'file_name': file_name, 'username_receiver': session['username']})
+
+    if not file_data:
+        return "File not found or you don't have permission to download this file"
+
+    # Retrieve the encryption key stored with the file's metadata
+    stored_key_binary = file_data['key']  # Retrieve from the metadata
+    stored_key_base64 = base64.b64encode(stored_key_binary).decode('utf-8')
+    encryption_key = base64.urlsafe_b64decode(stored_key_base64)
+
+    # Initialize Fernet with the retrieved encryption key
+    cipher = Fernet(encryption_key)
+
+    # Retrieve the encrypted file data from GridFS
+    gridfs_file = fs.find_one({'filename': file_name})
+
+    if gridfs_file is None:
+        return "Error retrieving the file from storage"
+
+    # Decrypt the file data before sending it
+    decrypted_data = cipher.decrypt(gridfs_file.read())
+
+    # Send the decrypted file to the user as a download
+    return app.response_class(
+        decrypted_data,
+        mimetype='application/octet-stream',
+        headers={"Content-Disposition": f"attachment;filename={file_name}"}
+    )
+
 
 @app.route('/register', methods=['POST'])
 def register():
