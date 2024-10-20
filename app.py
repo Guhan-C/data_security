@@ -18,19 +18,23 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # List of allowed and blocked IP addresses for access control
-#   # Replace with the IPs you want to allow
 BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
 
 def get_client_ip():
     # Check for reverse proxies, then use request.remote_addr
     if request.headers.getlist("X-Forwarded-For"):
-        return request.headers.getlist("X-Forwarded-For")[0]
+        # Log the X-Forwarded-For header for debugging
+        print(f"X-Forwarded-For header: {request.headers.getlist('X-Forwarded-For')}")
+        ip_list = request.headers.getlist("X-Forwarded-For")[0].split(',')
+        return ip_list[-1].strip()  # Return the last IP in the list
+    print(f"Remote Addr: {request.remote_addr}")  # Log the remote address
     return request.remote_addr
 
 def is_ip_allowed():
     ip = get_client_ip()
     print(f"Client IP: {ip}")  # Log the IP for debugging purposes
     if ip in BLOCKED_IPS:
+        print(f"Blocked IP detected: {ip}")
         return False
     return True
 
