@@ -1,0 +1,101 @@
+body {
+    font-family: 'Roboto', sans-serif;
+    background-image: url('https://www.transparenttextures.com/patterns/connected.png'), linear-gradient(135deg, #3498db 0%, #2ecc71 100%);
+    background-blend-mode: overlay;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+    padding: 2rem;
+    width: 100%;
+    max-width: 400px;
+    transition: transform 0.3s ease;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+}
+
+h1, h2 {
+    color: #4a4a4a;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+input[type="text"], input[type="password"], input[type="file"] {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    transition: background-color 0.3s ease;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="file"]:focus {
+    background-color: #e0e0e0;
+    outline: none;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #3498db;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+.message {
+    text-align: center;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.success {
+    color: #28a745;
+}
+
+.error {
+    color: #dc3545;
+}
+
+input:invalid {
+    border: 2px solid #dc3545;
+}
+
+input:focus, button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.5);
+}
+
+@media (max-width: 600px) {
+    .container {
+        width: 90%;
+        padding: 1rem;
+    }
+    
+    h1, h2 {
+        font-size: 1.5rem;
+    }
+    
+    input[type="text"], input[type="password"], input[type="file"], button {
+        font-size: 14px;
+    }
+}

@@ -1,24 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>File Upload App</title>
-        <link rel="stylesheet" href="../css/index.css" />
-    </head>
-    <body>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+</head>
+<body>
+    <div class="container">
         <h1>Welcome to the File Upload App</h1>
 
         {% if 'username' in session %}
-        <p>Welcome, {{ session['username'] }}!</p>
-        <form action="/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" name="file" required />
-            <button type="submit">Upload File</button>
-        </form>
-        <a href="/logout">Logout</a>
+            <p>Welcome, {{ session['username'] }}!</p>
+            <form action="/upload" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit">Upload File</button>
+            </form>
+            <a href="/logout">Logout</a>
         {% else %}
-        <p>Please choose an option:</p>
-        <a href="/login">Login</a> | <a href="/register">Register</a>
+            <p>Please choose an option:</p>
+            <div class="button-group">
+                <a href="{{ url_for('login') }}" class="button">Login</a>
+                <a href="{{ url_for('register') }}" class="button">Register</a>
+            </div>
         {% endif %}
-    </body>
+    </div>
+</body>
 </html>
