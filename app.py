@@ -18,7 +18,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # List of allowed and blocked IP addresses for access control
-BLOCKED_IPS = ['103.5.112.80']  # Replace with the IPs you want to block
+BLOCKED_IPS = []  # Replace with the IPs you want to block
 
 def get_client_ip():
     # Check for reverse proxies, then use request.remote_addr
@@ -87,7 +87,7 @@ def login():
     # Check if user exists and verify password
     if user and check_password_hash(user['password'], password):
         session['username'] = username
-        return redirect(url_for('index'))
+        return redirect(url_for('index.html'))
     
     return "Invalid username or password"
 
@@ -95,7 +95,11 @@ def login():
 def logout():
     session.pop('username', None)
     return "You have been logged out"
-
+@app.route('/search', methods=['GET'])
+def search():
+    que = request.form['query']
+    result =users_collection.find({"username":{'$regex': que}})
+    
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'username' not in session:

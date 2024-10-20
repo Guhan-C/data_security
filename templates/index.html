@@ -1,31 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
-</head>
-<body>
-    <div class="container">
-        <h1>Welcome to the File Upload App</h1>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>File Upload App</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/common.css') }}"
+        />
+        <link
+            rel="stylesheet"
+            href="{{ url_for('static', filename='css/index.css') }}"
+        />
+    </head>
+    <body>
+        <div class="container">
+            <h1>Welcome to the File Upload App</h1>
 
-        {% if 'username' in session %}
-            <p>Welcome, {{ session['username'] }}!</p>
-            <form action="/upload" method="POST" enctype="multipart/form-data">
-                <input type="file" name="file" required>
-                <button type="submit">Upload File</button>
-            </form>
-            <a href="/logout">Logout</a>
-        {% else %}
+            {% if 'username' in session %}
+            <div class="button-container">
+                <button
+                    onclick="window.location.href='https://example.com/page1'"
+                >
+                    Go to Page 1
+                </button>
+                <button
+                    onclick="window.location.href='https://example.com/page2'"
+                >
+                    Go to Page 2
+                </button>
+                <button
+                    onclick="window.location.href='https://example.com/page3'"
+                >
+                    Go to Page 3
+                </button>
+            </div>
+            {% else %}
             <p>Please choose an option:</p>
             <div class="button-group">
                 <a href="{{ url_for('login') }}" class="button">Login</a>
                 <a href="{{ url_for('register') }}" class="button">Register</a>
             </div>
-        {% endif %}
-    </div>
-</body>
+            {% endif %}
+        </div>
+    </body>
 </html>
