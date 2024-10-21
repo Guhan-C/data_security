@@ -124,7 +124,7 @@ def register():
         "password": hashed_password
     })
     
-    return "Registration successful"
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET'])
 def show_login():
@@ -143,7 +143,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('username', None)
-    return "You have been logged out"
+    return redirect(url_for('index'))
 
 @app.route('/upload', methods=['POST'])
 def upload_file():

@@ -13,10 +13,15 @@
         <h1>Register</h1>
         <form action="/register" method="POST">
             <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
+            <!-- Add pattern and title to the password input for validation -->
+            <input type="password" name="password" placeholder="Password" required 
+                   pattern="(?=.*\d)(?=.*[A-Z]).{8,}" 
+                   title="Password must be at least 8 characters long, contain at least one uppercase letter and one number">
             <button type="submit">Register</button>
         </form>
         <p><a href="/login">Already have an account? Login</a></p>
     </div>
 </body>
 </html>
+
+
