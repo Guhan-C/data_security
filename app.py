@@ -27,7 +27,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # List of allowed and blocked IP addresses for access control
-BLOCKED_IPS = ['103.5.112.80','103.130.204.146']  # Replace with the IPs you want to block
+BLOCKED_IPS = ['103.5.112.80','103.130.204.146',"14.139.187.130"]  # Replace with the IPs you want to block
 
 def get_client_ip():
     if request.headers.getlist("X-Forwarded-For"):
